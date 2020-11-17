@@ -14,7 +14,7 @@ class User extends Model
 
     //允许批量操作的字段
 
-//    public $fillable = ['user_name','user_passs','email'];
+//    public $fillable = ['user_name','user_pass','email'];
     public $guarded = [];
 
     //是否维护crated_at 和 updated_at 字段

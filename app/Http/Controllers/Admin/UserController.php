@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Model\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
@@ -43,7 +44,7 @@ class UserController extends Controller
 
         //添加数据库
         $username = $input['email'];
-        $pass = 123123;
+        $pass = Crypt::encrypt('pass');
         $res = User::create(['user_name'=>$username,'user_pass'=>$pass,'email'=>$input['email']]);
         if($res){
             $data = [
