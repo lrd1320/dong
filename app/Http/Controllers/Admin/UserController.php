@@ -14,9 +14,27 @@ class UserController extends Controller
      * 获取用户列表
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.user.list');
+//        1. 获取提交的请求参数
+//        $input = $request->all();
+//        dd($input);
+        $user =  User::orderBy('user_id','asc')
+            ->where(function($query) use($request){
+                $username = $request->input('username');
+                $email = $request->input('email');
+                if(!empty($username)){
+                    $query->where('user_name','like','%'.$username.'%');
+                }
+                if(!empty($email)){
+                    $query->where('email','like','%'.$email.'%');
+                }
+            })
+            ->paginate($request->input('num')?$request->input('num'):3);
+
+
+//        $user = User::paginate(3);
+        return view('admin.user.list',compact('user','request'));
     }
 
     /**
@@ -80,7 +98,9 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = User::find($id);
+
+        return view('admin.user.edit',compact('user'));
     }
 
     /**
@@ -92,7 +112,27 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+//        1. 根据id获取要修改的记录
+        $user = User::find($id);
+//        2. 获取要修改成的用户名
+        $username = $request->input('user_name');
+
+        $user->user_name = $username;
+
+        $res = $user->save();
+
+        if($res){
+            $data = [
+                'status'=>0,
+                'message'=>'修改成功'
+            ];
+        }else{
+            $data = [
+                'status'=>1,
+                'message'=>'修改失败'
+            ];
+        }
+        return $data;
     }
 
     /**
@@ -103,6 +143,41 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::find($id);
+        $res = $user->delete();
+        if($res){
+            $data = [
+                'status'=>0,
+                'message'=>'删除成功'
+            ];
+        }else{
+            $data = [
+                'status'=>1,
+                'message'=>'删除失败'
+            ];
+        }
+        return $data;
     }
+
+    //删除所有选中用户
+    public function delAll(Request $request)
+    {
+        $input = $request->input('ids');
+        dd($input);
+//        $res = User::destroy($input);
+//
+//        if($res){
+//            $data = [
+//                'status'=>0,
+//                'message'=>'删除成功'
+//            ];
+//        }else{
+//            $data = [
+//                'status'=>1,
+//                'message'=>'删除失败'
+//            ];
+//        }
+//        return $data;
+    }
+
 }

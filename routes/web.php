@@ -36,8 +36,14 @@ Route::group(['prefix'=>'admin','namespace'=>'Admin','middleware'=>['isLogin']],
     Route::get('welcome','LoginController@welcome');
 //后台退出登录路由
     Route::get('logout','LoginController@logout');
-    //用户后台模块 资源路由
+    //用户后台模块
+    Route::get('user/del','UserController@delAll');
     Route::resource('user','UserController');
+
+    //角色模块
+    Route::get('role/auth/{id}','RoleController@auth');
+    Route::post('role/doauth','RoleController@doAuth');
+    Route::resource('role','RoleController');
 });
 
 
